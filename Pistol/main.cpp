@@ -18,68 +18,12 @@ using std::endl;
 using std::string;
 
 
-string read_(tcp::socket & socket){
-    boost::asio::streambuf buf;
-    boost::asio::read_until(socket,buf, "\n");
-    string data = boost::asio::buffer_cast<const char*>(buf.data());
-    
-    
-    return data;
-}
-
-
 int main(int argc, const char * argv[]) {
     
     
-    std::queue <string> msgbox;
-    
-    
-    //add sending functioning
-    std::thread reciever ([&msgbox](){
-        //Initialize
-        boost::asio::io_service io_service;
-        tcp::acceptor acceptor_ (io_service, tcp::endpoint(tcp::v4() , 1234));
-        tcp::socket Socket_ (io_service);
-        acceptor_.accept(Socket_); //initializing listning
-        
-        
-        //read operation
-        while(true){
-            string msg = read_(Socket_);
-            msgbox.push(msg);
-        }
-    });
-    
-    //add addons
-    std::thread printer ([&msgbox](){
-        while(true){
-            string msgb = msgbox.front();
-            cout << msgb << endl;
-            msgbox.pop();
-        }
-    });
-    
-    
-    std::thread client ([](){
-        cout << "this is client" << endl;
-        io_service io_service;
-        tcp::socket socket_ (io_service);
-        socket_.connect(tcp::endpoint(ip::address::from_string("127.0.0.1"), 1234));
-        
-    });
-    
-    
-    std::thread test ([](){
-        int x = 10;
-        int total = x +  5;
-        cout << total ;
-    }) ;
     
     
     
-    reciever.join();
-    client.join();
-    test.join();
    
     
     
